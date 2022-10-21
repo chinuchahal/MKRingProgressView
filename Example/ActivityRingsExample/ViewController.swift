@@ -91,9 +91,9 @@ class ViewController: UIViewController {
     private func updateButtonsProgress() {
         UIView.animate(withDuration: 0.5) {
             for button in self.buttons {
-                button.contentView.ring1.progress = 0.0//Double(arc4random() % 200) / 100.0
-                button.contentView.ring2.progress = 0.0//Double(arc4random() % 200) / 100.0
-                button.contentView.ring3.progress = 0.0//Double(arc4random() % 200) / 100.0
+                button.contentView.ring1.progress = Double(arc4random() % 200) / 100.0
+                button.contentView.ring2.progress = Double(arc4random() % 200) / 100.0
+                button.contentView.ring3.progress = Double(arc4random() % 200) / 100.0
             }
         }
     }

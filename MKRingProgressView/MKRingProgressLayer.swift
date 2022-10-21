@@ -336,31 +336,33 @@ open class RingProgressLayer: CALayer {
             }
         }
         
-        // Clock here
-        let cx = self.calculateCenterPointForClockLayer(center: c, radius: r, endAngle: angle1)
-        let cr = max((self.ringWidth) / 4, 1)
-        
-        
-        let clockPath = UIBezierPath(arcCenter: .init(x: cx.x, y: cx.y),
-                                      radius: cr,
-                                      startAngle: 0,
-                                      endAngle: 2 * CGFloat.pi, clockwise: true)
-        context.addPath(clockPath.cgPath)
-        
-        // hour stroke
-        let hr = calculateEndPointForHour(center: cx, offset: imgOffset, height: max(1, cr * 0.5))
-        context.move(to: cx)
-        context.addLine(to: .init(x: hr.x, y: hr.y))
-        
-        // minute stroke
-        let mn = calculateEndPointForMinute(center: cx, offset: imgOffset, height: max(1, cr * 0.65))
-        context.move(to: cx)
-        context.addLine(to: .init(x: mn.x, y: mn.y))
-        
-        // setting stroke
-        context.setStrokeColor(UIColor.white.cgColor)
-        context.setLineWidth(1)
-        context.strokePath()
+        if p > 0.0 || !hidesRingForZeroProgress {
+            // Clock here
+            let cx = self.calculateCenterPointForClockLayer(center: c, radius: r, endAngle: angle1)
+            let cr = max((self.ringWidth) / 4, 1)
+            
+            
+            let clockPath = UIBezierPath(arcCenter: .init(x: cx.x, y: cx.y),
+                                         radius: cr,
+                                         startAngle: 0,
+                                         endAngle: 2 * CGFloat.pi, clockwise: true)
+            context.addPath(clockPath.cgPath)
+            
+            // hour stroke
+            let hr = calculateEndPointForHour(center: cx, offset: imgOffset, height: max(1, cr * 0.5))
+            context.move(to: cx)
+            context.addLine(to: .init(x: hr.x, y: hr.y))
+            
+            // minute stroke
+            let mn = calculateEndPointForMinute(center: cx, offset: imgOffset, height: max(1, cr * 0.65))
+            context.move(to: cx)
+            context.addLine(to: .init(x: mn.x, y: mn.y))
+            
+            // setting stroke
+            context.setStrokeColor(UIColor.white.cgColor)
+            context.setLineWidth(1)
+            context.strokePath()
+        }
     }
         
     func calculateCenterPointForClockLayer (center: CGPoint, radius: CGFloat, endAngle: CGFloat) -> CGPoint {
