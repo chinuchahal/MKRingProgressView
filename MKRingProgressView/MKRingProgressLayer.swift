@@ -191,7 +191,7 @@ open class RingProgressLayer: CALayer {
         context.strokePath()
         
         // Draw solid arc
-        
+        var imgOffset = 0.0
         if angle > maxAngle {
             let offset = angle - maxAngle
             
@@ -209,6 +209,7 @@ open class RingProgressLayer: CALayer {
             context.translateBy(x: circleRect.midX, y: circleRect.midY)
             context.rotate(by: offset)
             context.translateBy(x: -circleRect.midX, y: -circleRect.midY)
+            imgOffset = offset
         }
         
         // Draw shadow and progress end
@@ -333,7 +334,47 @@ open class RingProgressLayer: CALayer {
                 context.addPath(arc1Path.cgPath)
                 context.strokePath()
             }
+            
+            // Clock here
+            let cx = self.calculateCenterPointForClockLayer(center: c, radius: r, endAngle: angle1)
+            let cr = max((self.ringWidth) / 4, 1)
+            
+            
+            let circlePath = UIBezierPath(arcCenter: .init(x: cx.x, y: cx.y),
+                                          radius: cr,
+                                          startAngle: 0,
+                                          endAngle: 2 * CGFloat.pi, clockwise: true)
+            context.addPath(circlePath.cgPath)
+            
+            // hour stroke
+            let xy = calculateEndPointForHour(center: cx, offset: imgOffset, height: max(1, cr * 0.5))
+            context.move(to: cx)
+            context.addLine(to: .init(x: xy.x, y: xy.y))
+            
+            // minute stroke
+            let yz = calculateEndPointForMinute(center: cx, offset: imgOffset, height: max(1, cr * 0.65))
+            context.move(to: cx)
+            context.addLine(to: .init(x: yz.x, y: yz.y))
+            
+            // setting stroke
+            context.setStrokeColor(UIColor.white.cgColor)
+            context.setLineWidth(1)
+            context.strokePath()
         }
+    }
+        
+    func calculateCenterPointForClockLayer (center: CGPoint, radius: CGFloat, endAngle: CGFloat) -> CGPoint {
+        return .init(x: center.x + (radius * cos(endAngle)), y: center.y + (radius * sin(endAngle)))
+    }
+    
+    func calculateEndPointForHour(center: CGPoint, offset: CGFloat, height: CGFloat) -> CGPoint {
+        guard offset > 0 else { return .init(x: center.x, y: center.y - height) }
+        return .init(x: center.x + (height * cos(-offset - (.pi/2))), y: center.y + (height * sin(-offset - (.pi/2))))
+    }
+    
+    func calculateEndPointForMinute(center: CGPoint, offset: CGFloat, height: CGFloat) -> CGPoint {
+        guard offset > 0 else { return .init(x: center.x + (height * cos(.pi/6)), y: center.y + (height * sin(.pi/6))) }
+        return .init(x: center.x + (height * cos(-offset + (.pi/6))), y: center.y + (height * sin(-offset + (.pi/6))))
     }
 }
 
